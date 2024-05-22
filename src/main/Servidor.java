@@ -12,19 +12,26 @@ public class Servidor {
             // Aceita uma conexão do cliente
             Socket socket = servidor.accept();
             // Cria streams para enviar e receber objetos
-            ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream saida = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            ObjectInputStream entrada = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 
             // Envia cada caractere da mensagem para o cliente
+       
+         // Envia a mensagem para o cliente
             saida.writeObject(mensagem);
-           
-            System.out.println("SERVIDOR: " + entrada.readObject());
-        
+            saida.flush(); // Certifica-se de que os dados são enviados imediatamente
+            System.out.println("SERVIDOR: Mensagem enviada");
+
+            // Espera a confirmação do cliente
+            String confirmacao = (String) entrada.readObject();
+            System.out.println("SERVIDOR: Confirmação recebida do cliente: " + confirmacao);
+
             // Fecha as streams e o socket
             entrada.close();
             saida.close();
             socket.close();
             servidor.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
